@@ -1,0 +1,112 @@
+{
+  "theme": "DARK",
+  "archetype": "Archetype 2: The Performance Pro (Esports / Arcade Basketball Vibe)",
+  "emotional_tone": "High energy, competitive, elite, tracking progression",
+  "colors": {
+    "background": {
+      "base": "#0A0A0A",
+      "surface": "#121212",
+      "surface_highlight": "#1C1C1C",
+      "border": "rgba(255, 255, 255, 0.1)"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#A3A3A3",
+      "muted": "#737373"
+    },
+    "brand": {
+      "primary": "#FFD700",
+      "primary_glow": "rgba(255, 215, 0, 0.3)",
+      "secondary": "#00F0FF",
+      "secondary_glow": "rgba(0, 240, 255, 0.3)",
+      "success": "#00FF66",
+      "danger": "#FF3366"
+    },
+    "tiers": {
+      "bronze": "#CD7F32",
+      "silver": "#C0C0C0",
+      "gold": "#FFD700",
+      "hof": "#B042FF",
+      "legend": "#FF3366"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "headings": "'Teko', sans-serif",
+      "body": "'Manrope', sans-serif",
+      "numbers": "'JetBrains Mono', monospace"
+    },
+    "scale": {
+      "h1": "text-5xl sm:text-6xl uppercase tracking-tighter leading-none",
+      "h2": "text-3xl sm:text-4xl uppercase tracking-tight",
+      "h3": "text-2xl uppercase tracking-tight",
+      "body": "text-base tracking-normal",
+      "small": "text-sm tracking-wide uppercase",
+      "stats": "text-3xl sm:text-4xl tabular-nums font-bold"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "Dense and compact control-room grid (Mode B). Every pixel utilized.",
+    "bento_grid": "grid-cols-1 md:grid-cols-4 lg:grid-cols-12 gap-4 or gap-6",
+    "container_padding": "p-6 sm:p-8",
+    "surface_style": "Grid Borders (The Technical Look). 1px border-border/40 on components, minimal border-radius (rounded-sm or rounded-none)."
+  },
+  "animations": {
+    "hover": "Subtle translate-y-[-2px] and shadow-[0_0_15px_rgba(255,215,0,0.15)] for interactive cards.",
+    "buttons": "Active scale down, hover background lightens slightly.",
+    "tracing_beam": "Use for high-tier upgrades or active tabs. 1px glowing edge.",
+    "marquee": "Sports ticker style at the top (react-fast-marquee) for latest game result or total XP."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#FFD700] text-black font-bold uppercase tracking-widest rounded-none hover:bg-[#F2CC00]",
+      "secondary": "bg-transparent border border-[#FFD700]/50 text-[#FFD700] hover:bg-[#FFD700]/10 rounded-none",
+      "icon": "h-10 w-10 flex items-center justify-center border border-white/10 hover:border-[#FFD700]/50 hover:text-[#FFD700]"
+    },
+    "cards": {
+      "dashboard_widget": "bg-[#121212] border border-white/10 p-6 flex flex-col gap-4 relative overflow-hidden group",
+      "player_card": "bg-gradient-to-br from-[#1A1A1A] to-[#0A0A0A] border-t-2 border-[#FFD700] relative"
+    },
+    "tables": {
+      "game_log": "w-full text-left text-sm whitespace-nowrap tabular-nums. Header: uppercase text-xs text-white/50 border-b border-white/20 pb-3. Rows: border-b border-white/5 hover:bg-white/5 transition-colors."
+    },
+    "charts": {
+      "library": "recharts",
+      "usage": "AreaChart for stat trends (uses #FFD700 with gradient fill), RadarChart for Player Build stats (fills with #00F0FF at 20% opacity), BarChart for XP breakdown."
+    }
+  },
+  "media_assets": {
+    "background_textures": [
+      {
+        "url": "https://static.prod-images.emergentagent.com/jobs/015f7e55-c4b6-4d33-9365-49c9f7324cf6/images/bd8026daf9f83ed9edc4957e1ce195f449e918dd7781250b787a4f8db2a8d028.png",
+        "category": "Hero Background / Overlays",
+        "description": "Abstract neon gold and black grid. Use with opacity-20 and mix-blend-overlay on the main dashboard background to give an esports vibe."
+      }
+    ],
+    "player_silhouettes": [
+      {
+        "url": "https://images.unsplash.com/photo-1519432473078-0151c4f90335?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHwxfHxiYXNrZXRiYWxsJTIwcGxheWVyJTIwc2lsaG91ZXR0ZSUyMGRhcmt8ZW58MHx8fHwxNzc4NzQ5NzY5fDA&ixlib=rb-4.1.0&q=85",
+        "category": "Player Card Hero",
+        "description": "Man dribbling basketball in the dark. Use as the background for the main 'Player Build' summary card. Apply bg-black/50 overlay."
+      }
+    ]
+  },
+  "testing": {
+    "requirements": "All interactive and key informational elements MUST include a data-testid attribute in kebab-case."
+  },
+  "instructions_to_main_agent": [
+    "Build a single-page interactive application using React and Tailwind.",
+    "Implement the UI mimicking an NBA 2K MyCareer progression dashboard.",
+    "Use a dark, high-contrast theme (Pure Black, Dark Gray, with striking Gold #FFD700 accents).",
+    "Do NOT use 'Inter'. Import 'Teko' for headings, 'Manrope' for body, and 'JetBrains Mono' for numbers.",
+    "Create 4 main areas/tabs: Overview (Hero/Stats/Charts), Game Log (Table & Add Game Modal), Attributes (Upgrade Panels), Badges (Tiered Upgrades).",
+    "In the Game Log modal, auto-calculate XP based on inputted stats (PTS, REB, AST, etc.), applying difficulty multipliers, event types (Win/Loss), and double-double/triple-double bonuses.",
+    "In Attributes, categorize into Finishing, Shooting, Playmaking, Defense, Rebounding, Physicals. Implement tiered costs logic (50, 75, 100, 125, 225).",
+    "In Badges, implement Bronze (50), Silver (75), Gold (100), HOF (225), Legend (500) upgrades.",
+    "Manage global state for Total XP, Shared XP Balance, and Games Array.",
+    "Use 'recharts' for generating charts (Line/Area for stats over time, Radar for player build overall rating).",
+    "Use the provided image assets in 'media_assets' for the player card and background overlays to reinforce the arcade/esports aesthetic.",
+    "Ensure the layout is highly dense and tabular where needed, like a real sports analytics dashboard.",
+    "Use lucide-react for icons (e.g., Trophy, Target, Activity, Flame, ChevronUp)."
+  ]
+}
