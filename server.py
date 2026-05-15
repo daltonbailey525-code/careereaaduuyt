@@ -165,6 +165,90 @@ BADGES_DEFAULT = [
 # Map attribute name -> category lookup
 ATTR_TO_CATEGORY = {name: cat for cat, name in ATTRIBUTES_DEFAULT}
 
+# Universal 2K-style overall formula.
+# This intentionally uses ONE formula for every position. A PG, wing, big, or custom build
+# is judged by the same attribute priorities instead of position-specific weights.
+UNIVERSAL_OVERALL_WEIGHTS = {
+    # Highest value: athletic pop and shooting creation/spacing
+    "Speed": 2.0,
+    "Agility": 2.0,
+    "Vertical": 2.0,
+    "Mid-Range Shot": 2.0,
+    "Three-Point Shot": 2.0,
+
+    # High value: finishing pressure and defensive playmaking
+    "Driving Layup": 1.5,
+    "Driving Dunk": 1.5,
+    "Standing Dunk": 1.5,
+    "Steal": 1.5,
+    "Block": 1.5,
+
+    # Medium value: playmaking, speed with ball, and rebounding
+    "Pass Accuracy": 1.0,
+    "Ball Handle": 1.0,
+    "Speed With Ball": 1.0,
+    "Offensive Rebound": 1.0,
+    "Defensive Rebound": 1.0,
+}
+UNIVERSAL_LOW_VALUE_WEIGHT = 0.6
+UNIVERSAL_OVERALL_SCALE_BASE = 20
+UNIVERSAL_OVERALL_SCALE_MULTIPLIER = 0.88
+
+
+def compute_universal_overall(attributes: List[dict]) -> dict:
+    """Return one universal overall that values every position the same.
+
+    Priority groups requested for the site:
+    - Highest: Speed, Agility, Vertical, Shooting
+    - High: Dunks, Layups, Steal, Block
+    - Medium: Playmaking, Speed With Ball, Rebounding
+    - Low: everything else
+
+    The weighted rating is curved into a more 2K-like 60-99 range so a strong build
+    does not look artificially low from low-value attributes dragging down a plain average.
+    """
+    total = 0.0
+    weight_total = 0.0
+    groups = {"highest": [], "high": [], "medium": [], "low": []}
+
+    for attr in attributes or []:
+        name = attr.get("name", "")
+        try:
+            rating = int(attr.get("current_level", 50))
+        except Exception:
+            rating = 50
+        rating = max(1, min(99, rating))
+
+        weight = UNIVERSAL_OVERALL_WEIGHTS.get(name, UNIVERSAL_LOW_VALUE_WEIGHT)
+        total += rating * weight
+        weight_total += weight
+
+        if weight == 2.0:
+            groups["highest"].append(name)
+        elif weight == 1.5:
+            groups["high"].append(name)
+        elif weight == 1.0:
+            groups["medium"].append(name)
+        else:
+            groups["low"].append(name)
+
+    weighted_rating = total / weight_total if weight_total else 50.0
+    overall = round(UNIVERSAL_OVERALL_SCALE_BASE + (weighted_rating * UNIVERSAL_OVERALL_SCALE_MULTIPLIER))
+    overall = max(40, min(99, int(overall)))
+
+    return {
+        "overall": overall,
+        "weighted_rating": round(weighted_rating, 1),
+        "formula": "Universal weighted overall: highest 2.0x, high 1.5x, medium 1.0x, low 0.6x, then curved with 20 + rating * 0.88",
+        "weights": {
+            "highest": 2.0,
+            "high": 1.5,
+            "medium": 1.0,
+            "low": UNIVERSAL_LOW_VALUE_WEIGHT,
+        },
+        "groups": groups,
+    }
+
 def rating_tier(rating: int) -> str:
     if rating <= 25: return "1-25"
     if rating <= 50: return "26-50"
@@ -373,6 +457,7 @@ async def build_state(user_id: str, build_id: str) -> dict:
     earned = sum(g.get("final_xp", 0) for g in games)
     a_spent = sum(a.get("xp_spent", 0) for a in b.get("attributes", []))
     g_spent = sum(x.get("xp_spent", 0) for x in b.get("badges", []))
+    overall_info = compute_universal_overall(b.get("attributes", []))
     return {
         "build": b,
         "games": games,
@@ -381,6 +466,8 @@ async def build_state(user_id: str, build_id: str) -> dict:
             "attribute_xp_spent": a_spent,
             "badge_xp_spent": g_spent,
             "shared_balance": earned - a_spent - g_spent,
+            "overall": overall_info["overall"],
+            "overall_breakdown": overall_info,
         },
         "constants": {
             "difficulties": list(DIFFICULTY_MULTIPLIERS.keys()),
@@ -444,7 +531,7 @@ async def list_builds(user: dict = Depends(get_current_user)):
             earned += g.get("final_xp", 0)
         a_spent = sum(a.get("xp_spent", 0) for a in b.get("attributes", []))
         bd_spent = sum(x.get("xp_spent", 0) for x in b.get("badges", []))
-        ovr = round(sum(a.get("current_level", 50) for a in b.get("attributes", [])) / max(1, len(b.get("attributes", []))))
+        ovr = compute_universal_overall(b.get("attributes", [])).get("overall", 60)
         out.append({
             "id": b["id"], "name": b["name"], "position": b.get("position"), "height": b.get("height"),
             "created_at": b.get("created_at"),

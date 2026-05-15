@@ -116,6 +116,20 @@ Required environment variable:
 REACT_APP_BACKEND_URL=https://your-backend.onrender.com
 ```
 
+
+## Overall calculation
+
+The backend now uses one universal 2K-style overall formula for every position. It does not use PG, SG, SF, PF or C-specific weighting.
+
+Attribute value groups:
+
+- Highest value: Speed, Agility, Vertical, Mid-Range Shot and Three-Point Shot
+- High value: Driving Layup, Driving Dunk, Standing Dunk, Steal and Block
+- Medium value: Pass Accuracy, Ball Handle, Speed With Ball, Offensive Rebound and Defensive Rebound
+- Low value: everything else
+
+The weighted score is curved into a 2K-style overall with `20 + weighted_rating * 0.88`, capped at 99. The dashboard overall and build summary overall both come from this same formula.
+
 ## Notes
 
 The frontend uses Create React App, so any environment variable that needs to be available in the browser must start with `REACT_APP_`.
